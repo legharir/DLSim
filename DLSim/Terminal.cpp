@@ -55,5 +55,5 @@ void Terminal::mouseMoveEvent(QGraphicsSceneMouseEvent* event)
 
 void Terminal::mouseReleaseEvent(QGraphicsSceneMouseEvent* event)
 {
-	emit mouseReleased(event->pos());
+	emit mouseReleased(event->scenePos());
 }

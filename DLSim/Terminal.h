@@ -1,9 +1,9 @@
 #pragma once
 
-#include <QGraphicsObject>
+#include <QObject>
 #include <QGraphicsLineItem>
 
-class Terminal : public QGraphicsObject, public QGraphicsLineItem
+class Terminal : public QObject, public QGraphicsLineItem
 {
 	Q_OBJECT
 

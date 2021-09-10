@@ -1,27 +1,28 @@
-#pragma once
+﻿#pragma once
 
 #include <QGraphicsScene>
 
 class ElectronicComponent;
+class Terminal;
 
 class SimulationScene : public QGraphicsScene
 {
-	Q_OBJECT
+    Q_OBJECT
 
 public:
-	SimulationScene();
+    SimulationScene();
 
 private:
-	std::vector<ElectronicComponent*> m_electronicComponents;
+    std::vector<ElectronicComponent*> m_electronicComponents;
 
-	bool m_drawingWire = false;
-	QGraphicsLineItem* m_curWire = nullptr;
+    bool m_drawingWire = false;
+    QGraphicsLineItem* m_curWire = nullptr;
 
-	void addComponent(ElectronicComponent* component);
+    void addComponent(ElectronicComponent* component);
 
+    void snapWireToTerminal(const Terminal* terminal);
 
-	void onBeginWire(QPointF point);
-	void onUpdateWire(QPointF point);
-	void onEndWire(QPointF point);
+    void onBeginWire(const QPointF& point);
+    void onUpdateWire(const QPointF& point);
+    void onEndWire(const QPointF& point);
 };
-
