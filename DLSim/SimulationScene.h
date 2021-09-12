@@ -14,8 +14,8 @@ public:
 
 private:
     std::vector<ElectronicComponent*> m_electronicComponents;
+    std::vector<QGraphicsLineItem*> m_wires;
 
-    bool m_drawingWire = false;
     QGraphicsLineItem* m_curWire = nullptr;
 
     void addComponent(ElectronicComponent* component);
@@ -24,5 +24,7 @@ private:
 
     void onBeginWire(const QPointF& point);
     void onUpdateWire(const QPointF& point);
-    void onEndWire(const QPointF& point);
+    void onEndWire(const QPointF& point, ElectronicComponent& component);
+
+    void onElectronicComponentMoved(ElectronicComponent& component, const QPointF& delta);
 };

@@ -24,6 +24,8 @@ void SimulationScene::addComponent(ElectronicComponent* component)
     connect(component, &ElectronicComponent::updateWire, this, &SimulationScene::onUpdateWire);
     connect(component, &ElectronicComponent::endWire, this, &SimulationScene::onEndWire);
 
+    connect(component, &ElectronicComponent::moved, this, &SimulationScene::onElectronicComponentMoved);
+
     m_electronicComponents.push_back(component);
     addItem(component);
 }
@@ -38,7 +40,6 @@ void SimulationScene::snapWireToTerminal(const Terminal* terminal)
 
 void SimulationScene::onBeginWire(const QPointF& point)
 {
-    m_drawingWire = true;
     m_curWire = new QGraphicsLineItem(QLineF(point, point));
 
     for (auto& component : m_electronicComponents)
@@ -57,19 +58,39 @@ void SimulationScene::onUpdateWire(const QPointF& point)
     m_curWire->setLine(line);
 }
 
-void SimulationScene::onEndWire(const QPointF& point)
+void SimulationScene::onEndWire(const QPointF& point, ElectronicComponent& sourceComponent)
 {
     for (auto& component : m_electronicComponents)
     {
-        component->setTerminalsHighlighted(false);
-
-        if (const auto destinationTerminal = component->getTerminal(point))
+        // Check for and create connections between components.
+        if (auto destinationTerminal = component->getTerminal(point))
         {
+            component->addConnection({ false, *m_curWire, sourceComponent });
+            sourceComponent.addConnection({ true, *m_curWire, *component });
             snapWireToTerminal(*destinationTerminal);
+            m_wires.push_back(std::move(m_curWire));
         }
 
+        component->setTerminalsHighlighted(false);
         component->update();
     }
 
     m_curWire = nullptr;
+}
+
+void SimulationScene::onElectronicComponentMoved(ElectronicComponent& component, const QPointF& delta)
+{
+    for (auto& connection : component.m_connections)
+    {
+        auto line = connection.wire.line();
+        if (connection.isSource)
+        {
+            line.setP1(line.p1() + delta);
+        }
+        else
+        {
+            line.setP2(line.p2() + delta);
+        }
+        connection.wire.setLine(line);
+    }
 }
