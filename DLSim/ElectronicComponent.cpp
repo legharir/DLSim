@@ -18,26 +18,28 @@ void ElectronicComponent::setTerminalsHighlighted(bool highlight)
     }
 }
 
-std::optional<Terminal*> ElectronicComponent::getTerminal(const QPointF& scenePoint)
+const Terminal* ElectronicComponent::getIntersectingTerminal(const QPointF& scenePoint) const
 {
-    const auto it = std::find_if(m_terminals.begin(), m_terminals.end(), [&, this](const Terminal* terminal) {
-        const auto point = terminal->mapFromScene(scenePoint);
-        return terminal->contains(point);
-    });
+    const auto it = std::find_if(
+        m_terminals.begin(),
+        m_terminals.end(),
+        [&, this](const std::unique_ptr<Terminal>& terminal)
+        {
+            const auto point = terminal->mapFromScene(scenePoint);
+            return terminal->contains(point);
+        });
 
-    if (it != m_terminals.end())
-    {
-        return { *it };
-    }
-    return {};
+    return it != m_terminals.end() ? (*it).get() : nullptr;
 }
 
-void ElectronicComponent::addTerminal(Terminal* terminal)
+void ElectronicComponent::addTerminal(std::unique_ptr<Terminal> terminal)
 {
-    m_terminals.push_back(terminal);
-    QObject::connect(terminal, &Terminal::mousePressed, this, &ElectronicComponent::beginWire);
-    QObject::connect(terminal, &Terminal::mouseMoved, this, &ElectronicComponent::updateWire);
-    QObject::connect(terminal, &Terminal::mouseReleased, [this](const QPointF& point) { emit endWire(point, *this); });
+    QObject::connect(terminal.get(), &Terminal::mousePressed, this, &ElectronicComponent::beginWire);
+    QObject::connect(terminal.get(), &Terminal::mouseMoved, this, &ElectronicComponent::updateWire);
+    QObject::connect(
+        terminal.get(), &Terminal::mouseReleased, [this](const QPointF& point) { emit endWire(point, *this); });
+
+    m_terminals.push_back(std::move(terminal));
 }
 
 void ElectronicComponent::addConnection(const Connection& connection)
@@ -54,4 +56,9 @@ QVariant ElectronicComponent::itemChange(GraphicsItemChange change, const QVaria
     }
 
     return QGraphicsItem::itemChange(change, value);
+}
+
+const std::vector<std::unique_ptr<Terminal>>& ElectronicComponent::getTerminals() const
+{
+    return m_terminals;
 }

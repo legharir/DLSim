@@ -9,8 +9,10 @@
 #include "ElectronicComponent.h"
 #include "MathTools.h"
 
-Terminal::Terminal(qreal x1, qreal y1, qreal x2, qreal y2, QGraphicsItem* parent)
-    : QGraphicsLineItem(x1, y1, x2, y2, parent)
+Terminal::Terminal(Type type, Polarity polarity, ElectronicComponent* parent)
+    : QGraphicsLineItem(parent)
+    , m_type(type)
+    , m_polarity(polarity)
 {
     QGraphicsLineItem::setAcceptHoverEvents(true);
     QGraphicsLineItem::setAcceptDrops(true);
@@ -34,7 +36,7 @@ QPainterPath Terminal::shape() const
 {
     QPainterPath path;
     QRectF rect(line().p1(), line().p2());
-    path.addRect(rect.marginsAdded(QMarginsF(2, 2, 2, 2)));
+    path.addRect(rect.marginsAdded(QMarginsF(5, 5, 5, 5)));
     return path;
 }
 
@@ -57,4 +59,9 @@ void Terminal::mouseMoveEvent(QGraphicsSceneMouseEvent* event)
 void Terminal::mouseReleaseEvent(QGraphicsSceneMouseEvent* event)
 {
     emit mouseReleased(event->scenePos());
+}
+
+Terminal::Type Terminal::getType() const
+{
+    return m_type;
 }

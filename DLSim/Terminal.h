@@ -3,12 +3,27 @@
 #include <QGraphicsLineItem>
 #include <QObject>
 
+class ElectronicComponent;
+
 class Terminal : public QObject, public QGraphicsLineItem
 {
     Q_OBJECT
 
 public:
-    Terminal(qreal x1, qreal y1, qreal x2, qreal y2, QGraphicsItem* parent = nullptr);
+    enum class Type
+    {
+        Input,
+        Output
+    };
+
+    enum class Polarity
+    {
+        None,
+        Negative,
+        Positive,
+    };
+
+    Terminal(Type type, Polarity polarity = Polarity::None, ElectronicComponent* parent = nullptr);
 
     void setHighlighted(bool highlight);
 
@@ -21,11 +36,18 @@ public:
     void mouseMoveEvent(QGraphicsSceneMouseEvent* event) override;
     void mouseReleaseEvent(QGraphicsSceneMouseEvent* event) override;
 
+    Type getType() const;
+
+    const ElectronicComponent* component;
+
 signals:
     void mousePressed(const QPointF& point);
     void mouseMoved(const QPointF& point);
     void mouseReleased(const QPointF& point);
 
 private:
+    Type m_type;
+    Polarity m_polarity;
+
     bool m_highlighted = false;
 };

@@ -11,29 +11,35 @@
 
 SimulationScene::SimulationScene()
 {
-    Battery* battery = new Battery();
-    addComponent(battery);
-
-    Led* led = new Led();
-    addComponent(led);
+    addComponent(std::make_unique<Battery>());
+    addComponent(std::make_unique<Led>());
 }
 
-void SimulationScene::addComponent(ElectronicComponent* component)
+void SimulationScene::addComponent(std::unique_ptr<ElectronicComponent> component)
 {
-    connect(component, &ElectronicComponent::beginWire, this, &SimulationScene::onBeginWire);
-    connect(component, &ElectronicComponent::updateWire, this, &SimulationScene::onUpdateWire);
-    connect(component, &ElectronicComponent::endWire, this, &SimulationScene::onEndWire);
+    m_currentManager.addComponent(component.get());
 
-    connect(component, &ElectronicComponent::moved, this, &SimulationScene::onElectronicComponentMoved);
+    connect(component.get(), &ElectronicComponent::beginWire, this, &SimulationScene::onBeginWire);
+    connect(component.get(), &ElectronicComponent::updateWire, this, &SimulationScene::onUpdateWire);
+    connect(component.get(), &ElectronicComponent::endWire, this, &SimulationScene::onEndWire);
 
-    m_electronicComponents.push_back(component);
-    addItem(component);
+    connect(component.get(), &ElectronicComponent::moved, this, &SimulationScene::onElectronicComponentMoved);
+
+    addItem(component.get());
+
+    m_electronicComponents.push_back(std::move(component));
 }
 
-void SimulationScene::snapWireToTerminal(const Terminal* terminal)
+void SimulationScene::connectComponents(ElectronicComponent& source, ElectronicComponent& destination)
+{
+    source.addConnection({ true, *m_curWire, destination });
+    destination.addConnection({ false, *m_curWire, source });
+}
+
+void SimulationScene::snapWireToTerminal(const Terminal& terminal)
 {
     auto snappedLine = m_curWire->line();
-    const auto terminalCenter = terminal->mapToScene(terminal->line().center());
+    const auto terminalCenter = terminal.mapToScene(terminal.line().center());
     snappedLine.setP2(terminalCenter);
     m_curWire->setLine(snappedLine);
 }
@@ -60,21 +66,28 @@ void SimulationScene::onUpdateWire(const QPointF& point)
 
 void SimulationScene::onEndWire(const QPointF& point, ElectronicComponent& sourceComponent)
 {
+    auto wireConnected = false;
     for (auto& component : m_electronicComponents)
     {
         // Check for and create connections between components.
-        if (auto destinationTerminal = component->getTerminal(point))
+        if (auto destinationTerminal = component->getIntersectingTerminal(point))
         {
-            component->addConnection({ false, *m_curWire, sourceComponent });
-            sourceComponent.addConnection({ true, *m_curWire, *component });
+            connectComponents(sourceComponent, *component);
             snapWireToTerminal(*destinationTerminal);
-            m_wires.push_back(std::move(m_curWire));
+            m_wires.push_back(m_curWire);
+            wireConnected = true;
         }
 
+        // Unhighlight the terminal.
         component->setTerminalsHighlighted(false);
         component->update();
     }
 
+    // Remove the wire if it didn't connect the component to another.
+    if (!wireConnected)
+    {
+        removeItem(m_curWire);
+    }
     m_curWire = nullptr;
 }
 

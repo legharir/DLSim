@@ -1,15 +1,16 @@
 ﻿#pragma once
 
+#include <memory>
 #include <optional>
 #include <vector>
 
 #include <QGraphicsObject>
 
-class Terminal;
+#include "Terminal.h"
 
 class ElectronicComponent : public QGraphicsObject
 {
-    Q_OBJECT
+    Q_OBJECT;
 
 public:
     struct Connection
@@ -23,11 +24,11 @@ public:
 
     void setTerminalsHighlighted(bool highlight);
 
-    // Returns an std::optional containing the terminal that intersects with the
-    // given point (in scene coordinates).
-    std::optional<Terminal*> getTerminal(const QPointF& scenePoint);
+    const Terminal* getIntersectingTerminal(const QPointF& scenePoint) const;
 
     void addConnection(const Connection& connection);
+
+    const std::vector<std::unique_ptr<Terminal>>& getTerminals() const;
 
     // QGraphicsItem overrides.
     QVariant itemChange(GraphicsItemChange change, const QVariant& value);
@@ -42,7 +43,7 @@ signals:
     void moved(ElectronicComponent& component, const QPointF& delta);
 
 protected:
-    void addTerminal(Terminal* terminal);
+    void addTerminal(std::unique_ptr<Terminal> terminal);
 
-    std::vector<Terminal*> m_terminals;
+    std::vector<std::unique_ptr<Terminal>> m_terminals;
 };

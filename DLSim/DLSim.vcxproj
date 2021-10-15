@@ -60,7 +60,7 @@
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
-      <LanguageStandard>stdcpp17</LanguageStandard>
+      <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'" Label="Configuration">
@@ -91,7 +91,10 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Battery.cpp" />
+    <ClCompile Include="BreadthFirstSearch.cpp" />
+    <ClCompile Include="CurrentManager.cpp" />
     <ClCompile Include="ElectronicComponent.cpp" />
+    <ClCompile Include="Graph.cpp" />
     <ClCompile Include="Led.cpp" />
     <ClCompile Include="MathTools.cpp" />
     <ClCompile Include="SimulationScene.cpp" />
@@ -113,6 +116,9 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Battery.h" />
+    <ClInclude Include="BreadthFirstSearch.h" />
+    <ClInclude Include="CurrentManager.h" />
+    <ClInclude Include="Graph.h" />
     <ClInclude Include="Led.h" />
     <ClInclude Include="MathTools.h" />
   </ItemGroup>

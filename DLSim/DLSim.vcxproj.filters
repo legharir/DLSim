@@ -58,15 +58,21 @@
     <ClCompile Include="Led.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Graph.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="CurrentManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <QtMoc Include="SimulationScene.h">
       <Filter>Header Files</Filter>
     </QtMoc>
-    <QtMoc Include="ElectronicComponent.h">
+    <QtMoc Include="Terminal.h">
       <Filter>Header Files</Filter>
     </QtMoc>
-    <QtMoc Include="Terminal.h">
+    <QtMoc Include="ElectronicComponent.h">
       <Filter>Header Files</Filter>
     </QtMoc>
   </ItemGroup>
@@ -78,6 +84,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Led.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Graph.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="CurrentManager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
