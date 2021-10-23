@@ -9,10 +9,12 @@
 #include "ElectronicComponent.h"
 #include "MathTools.h"
 
-Terminal::Terminal(Type type, Polarity polarity, ElectronicComponent* parent)
+Terminal::Terminal(Type type, Polarity polarity, ElectronicComponent* parent, const std::string& name)
     : QGraphicsLineItem(parent)
+    , m_component(parent)
     , m_type(type)
     , m_polarity(polarity)
+    , m_name(name)
 {
     QGraphicsLineItem::setAcceptHoverEvents(true);
     QGraphicsLineItem::setAcceptDrops(true);
@@ -48,7 +50,7 @@ QRectF Terminal::boundingRect() const
 void Terminal::mousePressEvent(QGraphicsSceneMouseEvent* event)
 {
     const auto midpoint = MathTools::midpoint(line());
-    emit mousePressed(QGraphicsLineItem::mapToScene(midpoint));
+    emit mousePressed(this, QGraphicsLineItem::mapToScene(midpoint));
 }
 
 void Terminal::mouseMoveEvent(QGraphicsSceneMouseEvent* event)
@@ -58,10 +60,25 @@ void Terminal::mouseMoveEvent(QGraphicsSceneMouseEvent* event)
 
 void Terminal::mouseReleaseEvent(QGraphicsSceneMouseEvent* event)
 {
-    emit mouseReleased(event->scenePos());
+    emit mouseReleased(this, event->scenePos());
 }
 
 Terminal::Type Terminal::getType() const
 {
     return m_type;
+}
+
+Terminal::Polarity Terminal::getPolarity() const
+{
+    return m_polarity;
+}
+
+std::string Terminal::getName() const
+{
+    return m_name;
+}
+
+ElectronicComponent* Terminal::getComponent() const
+{
+    return component;
 }

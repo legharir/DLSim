@@ -1,6 +1,7 @@
 ﻿#pragma once
 
 #include <memory>
+#include <unordered_map>
 
 #include <QGraphicsScene>
 
@@ -14,6 +15,12 @@ class SimulationScene : public QGraphicsScene
     Q_OBJECT;
 
 public:
+    struct Connection
+    {
+        const ElectronicComponent& component;
+        QGraphicsLineItem& wire;
+    };
+
     SimulationScene();
 
 private:
@@ -22,16 +29,20 @@ private:
 
     QGraphicsLineItem* m_curWire = nullptr;
 
-    void addComponent(std::unique_ptr<ElectronicComponent> component);
+    void addComponent(std::unique_ptr<ElectronicComponent> electronicComponent);
 
-    void connectComponents(ElectronicComponent& source, ElectronicComponent& destination);
+    void onComponentsChanged();
+
+    void connectTerminals(Terminal* source, Terminal* dest);
     void snapWireToTerminal(const Terminal& terminal);
 
-    void onBeginWire(const QPointF& point);
+    void onBeginWire(const Terminal* terminal, const QPointF& point);
     void onUpdateWire(const QPointF& point);
-    void onEndWire(const QPointF& point, ElectronicComponent& component);
+    void onEndWire(const Terminal* terminal, const QPointF& point);
 
     void onElectronicComponentMoved(ElectronicComponent& component, const QPointF& delta);
 
     CurrentManager m_currentManager;
+
+    std::unordered_map<const ElectronicComponent*, Connection> m_connections;
 };

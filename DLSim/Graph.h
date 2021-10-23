@@ -2,9 +2,11 @@
 
 #pragma once
 
-#include <set>
 #include <unordered_map>
+#include <unordered_set>
 #include <vector>
+
+#include <QDebug>
 
 template <typename T>
 class Graph
@@ -28,12 +30,11 @@ public:
     void addEdge(T source, T dest)
     {
         m_adj[source].insert(dest);
-        m_adj[dest].insert(source);
     }
 
-    std::set<T> getNeighbours(T v) const
+    const std::unordered_set<T>& getNeighbours(T v) const
     {
-        return m_adj[v];
+        return m_adj.at(v);
     }
 
     auto begin() const
@@ -46,6 +47,23 @@ public:
         return m_adj.end();
     }
 
+    void print() const
+    {
+        for (const auto& [vertex, neighbours] : m_adj)
+        {
+            QString neighboursStr;
+
+            for (const auto& neighbour : neighbours)
+            {
+                neighboursStr.push_back(QString::fromStdString(neighbour->getName()));
+                neighboursStr.push_back(QString::fromStdString(", "));
+            }
+
+            qDebug() << QString::fromStdString(vertex->getName()) << ":"
+                     << "[" << neighboursStr << "]";
+        }
+    }
+
 private:
-    std::unordered_map<T, std::set<T>> m_adj;
+    std::unordered_map<T, std::unordered_set<T>> m_adj;
 };

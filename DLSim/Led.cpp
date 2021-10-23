@@ -6,7 +6,7 @@
 
 Led::Led()
 {
-    auto terminal = std::make_unique<Terminal>(Terminal::Type::Input, Terminal::Polarity::None, this);
+    auto terminal = std::make_unique<Terminal>(Terminal::Type::Input, Terminal::Polarity::None, this, "led");
     terminal->setLine(QLineF(0, 0, 20, 0));
     addTerminal(std::move(terminal));
 }

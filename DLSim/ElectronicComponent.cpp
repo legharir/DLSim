@@ -18,7 +18,7 @@ void ElectronicComponent::setTerminalsHighlighted(bool highlight)
     }
 }
 
-const Terminal* ElectronicComponent::getIntersectingTerminal(const QPointF& scenePoint) const
+Terminal* ElectronicComponent::getIntersectingTerminal(const QPointF& scenePoint) const
 {
     const auto it = std::find_if(
         m_terminals.begin(),
@@ -36,16 +36,15 @@ void ElectronicComponent::addTerminal(std::unique_ptr<Terminal> terminal)
 {
     QObject::connect(terminal.get(), &Terminal::mousePressed, this, &ElectronicComponent::beginWire);
     QObject::connect(terminal.get(), &Terminal::mouseMoved, this, &ElectronicComponent::updateWire);
-    QObject::connect(
-        terminal.get(), &Terminal::mouseReleased, [this](const QPointF& point) { emit endWire(point, *this); });
+    QObject::connect(terminal.get(), &Terminal::mouseReleased, this, &ElectronicComponent::endWire);
 
     m_terminals.push_back(std::move(terminal));
 }
 
-void ElectronicComponent::addConnection(const Connection& connection)
-{
-    m_connections.push_back(connection);
-}
+//void ElectronicComponent::addConnection(const Connection& connection)
+//{
+//    m_connections.push_back(connection);
+//}
 
 QVariant ElectronicComponent::itemChange(GraphicsItemChange change, const QVariant& value)
 {

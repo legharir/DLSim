@@ -15,7 +15,9 @@ public:
 
     void connectTerminals(const Terminal* source, const Terminal* dest);
 
-    bool canCurrentFlow() const;
+    bool hasPath(const Terminal* source, const Terminal* dest) const;
+
+    void printGraph() const;
 
 private:
     Graph<const Terminal*> m_circuitGraph;

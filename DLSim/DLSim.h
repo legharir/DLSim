@@ -14,7 +14,7 @@ class DLSim : public QMainWindow
     Q_OBJECT
 
 public:
-    DLSim(QWidget *parent = Q_NULLPTR);
+    DLSim(QWidget* parent = Q_NULLPTR);
 
 private:
     Ui::DLSimClass ui;

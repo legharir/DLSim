@@ -91,6 +91,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Battery.cpp" />
+    <ClCompile Include="GraphTools.cpp" />
     <ClCompile Include="BreadthFirstSearch.cpp" />
     <ClCompile Include="CurrentManager.cpp" />
     <ClCompile Include="ElectronicComponent.cpp" />
@@ -116,6 +117,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Battery.h" />
+    <ClInclude Include="GraphTools.h" />
     <ClInclude Include="BreadthFirstSearch.h" />
     <ClInclude Include="CurrentManager.h" />
     <ClInclude Include="Graph.h" />

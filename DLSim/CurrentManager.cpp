@@ -1,9 +1,9 @@
 #include "CurrentManager.h"
 
 #include "Battery.h"
+#include "BreadthFirstSearch.h"
 #include "ElectronicComponent.h"
 #include "Terminal.h"
-
 
 void CurrentManager::addComponent(const ElectronicComponent* component)
 {
@@ -26,7 +26,13 @@ void CurrentManager::connectTerminals(const Terminal* source, const Terminal* de
     m_circuitGraph.addEdge(source, dest);
 }
 
-bool CurrentManager::canCurrentFlow() const
+bool CurrentManager::hasPath(const Terminal* source, const Terminal* dest) const
 {
-    return false;
+    BreadthFirstSearch bfs(m_circuitGraph, source);
+    return bfs.hasPathTo(dest);
+}
+
+void CurrentManager::printGraph() const
+{
+    m_circuitGraph.print();
 }
