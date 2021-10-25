@@ -48,11 +48,6 @@ void SimulationScene::onComponentsChanged()
     }
 }
 
-void SimulationScene::connectTerminals(Terminal* source, Terminal* dest)
-{
-    m_currentManager.connectTerminals(source, dest);
-}
-
 void SimulationScene::snapWireToTerminal(const Terminal& terminal)
 {
     auto snappedLine = m_curWire->line();
@@ -67,10 +62,10 @@ void SimulationScene::onBeginWire(const Terminal* terminal, const QPointF& point
 
     for (auto& component : m_electronicComponents)
     {
-        //if (component.get() == terminal->getComponent())
-        //{
-        //    continue;
-        //}
+        if (component.get() == terminal->getComponent())
+        {
+            continue;
+        }
 
         component->setTerminalsHighlighted(true);
         component->update();
@@ -86,17 +81,26 @@ void SimulationScene::onUpdateWire(const QPointF& point)
     m_curWire->setLine(line);
 }
 
-void SimulationScene::onEndWire(const Terminal* sourceTerminal, const QPointF& point)
+void SimulationScene::onEndWire(Terminal* sourceTerminal, const QPointF& point)
 {
     auto wireConnected = false;
     for (auto& component : m_electronicComponents)
     {
         // Check for and create connections between components.
-        if (auto destinationTerminal = component->getIntersectingTerminal(point))
+        if (auto destTerminal = component->getIntersectingTerminal(point))
         {
-            //connectTerminals(sourceTerminal, destinationTerminal);
-            snapWireToTerminal(*destinationTerminal);
-            m_wires.push_back(m_curWire);
+            auto* sourceComponent = sourceTerminal->getComponent();
+            auto* destComponent = destTerminal->getComponent();
+            if (sourceComponent == destComponent)
+            {
+                continue;
+            }
+
+            sourceComponent->addConnection({ true, m_curWire });
+            destComponent->addConnection({ false, m_curWire });
+
+            m_currentManager.connectTerminals(sourceTerminal, destTerminal);
+            snapWireToTerminal(*destTerminal);
             wireConnected = true;
         }
 
@@ -116,19 +120,19 @@ void SimulationScene::onEndWire(const Terminal* sourceTerminal, const QPointF& p
     m_currentManager.printGraph();
 }
 
-void SimulationScene::onElectronicComponentMoved(ElectronicComponent& component, const QPointF& delta)
+void SimulationScene::onElectronicComponentMoved(const ElectronicComponent* component, const QPointF& delta)
 {
-    //for (auto& connection : component.)
-    //{
-    //    auto line = connection.wire.line();
-    //    if (connection.isSource)
-    //    {
-    //        line.setP1(line.p1() + delta);
-    //    }
-    //    else
-    //    {
-    //        line.setP2(line.p2() + delta);
-    //    }
-    //    connection.wire.setLine(line);
-    //}
+    for (auto& connection : component->getConnections())
+    {
+        auto line = connection.wire->line();
+        if (connection.isSource)
+        {
+            line.setP1(line.p1() + delta);
+        }
+        else
+        {
+            line.setP2(line.p2() + delta);
+        }
+        connection.wire->setLine(line);
+    }
 }

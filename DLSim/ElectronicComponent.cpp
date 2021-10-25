@@ -41,17 +41,22 @@ void ElectronicComponent::addTerminal(std::unique_ptr<Terminal> terminal)
     m_terminals.push_back(std::move(terminal));
 }
 
-//void ElectronicComponent::addConnection(const Connection& connection)
-//{
-//    m_connections.push_back(connection);
-//}
+const std::vector<ElectronicComponent::Connection>& ElectronicComponent::getConnections() const
+{
+    return m_connections;
+}
+
+void ElectronicComponent::addConnection(const Connection& connection)
+{
+    m_connections.push_back(connection);
+}
 
 QVariant ElectronicComponent::itemChange(GraphicsItemChange change, const QVariant& value)
 {
     if (change == ItemPositionChange)
     {
         const auto delta = value.toPointF() - pos();
-        emit moved(*this, delta);
+        emit moved(this, delta);
     }
 
     return QGraphicsItem::itemChange(change, value);

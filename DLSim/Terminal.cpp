@@ -78,7 +78,12 @@ std::string Terminal::getName() const
     return m_name;
 }
 
-ElectronicComponent* Terminal::getComponent() const
+ElectronicComponent* Terminal::getComponent()
 {
-    return component;
+    return m_component;
+}
+
+const ElectronicComponent* Terminal::getComponent() const
+{
+    return m_component;
 }

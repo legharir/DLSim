@@ -34,7 +34,8 @@ public:
 
     std::string getName() const;
 
-    ElectronicComponent* getComponent() const;
+    ElectronicComponent* getComponent();
+    const ElectronicComponent* getComponent() const;
 
     void setHighlighted(bool highlight);
 
@@ -61,5 +62,5 @@ private:
 
     std::string m_name;
 
-    const ElectronicComponent* m_component;
+    ElectronicComponent* m_component;
 };
