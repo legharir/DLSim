@@ -35,5 +35,7 @@ private:
 
     void onElectronicComponentMoved(const ElectronicComponent* component, const QPointF& delta);
 
+    void highlightConductingPaths();
+
     CurrentManager m_currentManager;
 };

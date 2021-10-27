@@ -118,6 +118,7 @@ void SimulationScene::onEndWire(Terminal* sourceTerminal, const QPointF& point)
     m_curWire = nullptr;
 
     m_currentManager.printGraph();
+    highlightConductingPaths();
 }
 
 void SimulationScene::onElectronicComponentMoved(const ElectronicComponent* component, const QPointF& delta)
@@ -134,5 +135,22 @@ void SimulationScene::onElectronicComponentMoved(const ElectronicComponent* comp
             line.setP2(line.p2() + delta);
         }
         connection.wire->setLine(line);
+    }
+}
+
+void SimulationScene::highlightConductingPaths()
+{
+    for (const auto& component : m_electronicComponents)
+    {
+        if (const auto battery = dynamic_cast<Battery*>(component.get()))
+        {
+            if (m_currentManager.hasPath(battery->getNegativeTerminal(), battery->getPositiveTerminal()))
+            {
+                for (const auto& connections : battery->getConnections())
+                {
+                    connections.wire->setOpacity(0.25);
+                }
+            }
+        }
     }
 }
