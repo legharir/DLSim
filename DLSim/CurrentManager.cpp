@@ -24,6 +24,7 @@ void CurrentManager::removeComponent(const ElectronicComponent* component)
 void CurrentManager::connectTerminals(const Terminal* source, const Terminal* dest)
 {
     m_circuitGraph.addEdge(source, dest);
+    m_circuitGraph.addEdge(dest, source);
 }
 
 bool CurrentManager::hasPath(const Terminal* source, const Terminal* dest) const

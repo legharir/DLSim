@@ -83,30 +83,26 @@ void SimulationScene::onUpdateWire(const QPointF& point)
 
 void SimulationScene::onEndWire(Terminal* sourceTerminal, const QPointF& point)
 {
+    setTerminalsHighlighted(false);
+
+    //auto destTerminal = std::find_if(
+    //    m_electronicComponents.begin(),
+    //    m_electronicComponents.end(),
+    //    [&](auto& component) { return component->getIntersectingTerminal(point); });
+
+
     auto wireConnected = false;
+
     for (auto& component : m_electronicComponents)
     {
-        // Check for and create connections between components.
+        // If the wire was placed on a terminal, create a connection to it.
         if (auto destTerminal = component->getIntersectingTerminal(point))
         {
-            auto* sourceComponent = sourceTerminal->getComponent();
-            auto* destComponent = destTerminal->getComponent();
-            if (sourceComponent == destComponent)
-            {
-                continue;
-            }
-
-            sourceComponent->addConnection({ true, m_curWire });
-            destComponent->addConnection({ false, m_curWire });
-
-            m_currentManager.connectTerminals(sourceTerminal, destTerminal);
+            createConnections(sourceTerminal, destTerminal);
             snapWireToTerminal(*destTerminal);
             wireConnected = true;
+            break;
         }
-
-        // Unhighlight the terminal.
-        component->setTerminalsHighlighted(false);
-        component->update();
     }
 
     // Remove the wire if it didn't connect the component to another.
@@ -123,7 +119,7 @@ void SimulationScene::onEndWire(Terminal* sourceTerminal, const QPointF& point)
 
 void SimulationScene::onElectronicComponentMoved(const ElectronicComponent* component, const QPointF& delta)
 {
-    for (auto& connection : component->getConnections())
+    for (auto& connection : m_connectionManager.getConnections(component))
     {
         auto line = connection.wire->line();
         if (connection.isSource)
@@ -146,11 +142,29 @@ void SimulationScene::highlightConductingPaths()
         {
             if (m_currentManager.hasPath(battery->getNegativeTerminal(), battery->getPositiveTerminal()))
             {
-                for (const auto& connections : battery->getConnections())
+                for (const auto& connection : m_connectionManager.getConnections(battery))
                 {
-                    connections.wire->setOpacity(0.25);
+                    connection.wire->setOpacity(0.25);
                 }
             }
         }
     }
+}
+
+void SimulationScene::setTerminalsHighlighted(bool highlighted)
+{
+    for (auto& component : m_electronicComponents)
+    {
+        component->setTerminalsHighlighted(false);
+        component->update();
+    }
+}
+
+void SimulationScene::createConnections(Terminal* sourceTerminal, Terminal* destTerminal)
+{
+    auto* sourceComponent = sourceTerminal->getComponent();
+    auto* destComponent = destTerminal->getComponent();
+
+    m_connectionManager.createConnection(sourceComponent, destComponent, m_curWire);
+    m_currentManager.connectTerminals(sourceTerminal, destTerminal);
 }

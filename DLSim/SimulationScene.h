@@ -6,6 +6,7 @@
 
 #include <QGraphicsScene>
 
+#include "ConnectionManager.h"
 #include "CurrentManager.h"
 
 class ElectronicComponent;
@@ -37,5 +38,10 @@ private:
 
     void highlightConductingPaths();
 
+    void setTerminalsHighlighted(bool highlighted);
+
+    void createConnections(Terminal* sourceTerminal, Terminal* destTerminal);
+
     CurrentManager m_currentManager;
+    ConnectionManager m_connectionManager;
 };

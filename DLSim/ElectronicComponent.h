@@ -13,20 +13,11 @@ class ElectronicComponent : public QGraphicsObject
     Q_OBJECT;
 
 public:
-    struct Connection
-    {
-        bool isSource;
-        QGraphicsLineItem* wire;
-    };
-
     ElectronicComponent();
 
     void setTerminalsHighlighted(bool highlight);
 
     Terminal* getIntersectingTerminal(const QPointF& scenePoint) const;
-
-    const std::vector<Connection>& getConnections() const;
-    void addConnection(const Connection& connection);
 
     const std::vector<std::unique_ptr<Terminal>>& getTerminals() const;
 
@@ -44,7 +35,4 @@ protected:
     void addTerminal(std::unique_ptr<Terminal> terminal);
 
     std::vector<std::unique_ptr<Terminal>> m_terminals;
-
-private:
-    std::vector<Connection> m_connections;
 };
