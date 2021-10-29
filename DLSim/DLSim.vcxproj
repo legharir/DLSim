@@ -101,6 +101,7 @@
     <ClCompile Include="MathTools.cpp" />
     <ClCompile Include="SimulationScene.cpp" />
     <ClCompile Include="Terminal.cpp" />
+    <ClCompile Include="Wire.cpp" />
     <QtRcc Include="DLSim.qrc" />
     <QtUic Include="DLSim.ui" />
     <QtMoc Include="DLSim.h" />
@@ -125,6 +126,7 @@
     <ClInclude Include="Graph.h" />
     <ClInclude Include="Led.h" />
     <ClInclude Include="MathTools.h" />
+    <ClInclude Include="Wire.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Condition="Exists('$(QtMsBuild)\qt.targets')">

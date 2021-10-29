@@ -1,6 +1,5 @@
 ﻿#include "SimulationScene.h"
 
-#include <QGraphicsLineItem>
 #include <QGraphicsSceneMouseEvent>
 
 #include <QDebug>
@@ -8,6 +7,7 @@
 #include "Battery.h"
 #include "Led.h"
 #include "Terminal.h"
+#include "Wire.h"
 
 SimulationScene::SimulationScene()
 {
@@ -58,7 +58,7 @@ void SimulationScene::snapWireToTerminal(const Terminal& terminal)
 
 void SimulationScene::onBeginWire(const Terminal* terminal, const QPointF& point)
 {
-    m_curWire = new QGraphicsLineItem(QLineF(point, point));
+    m_curWire = new Wire(QLineF(point, point));
 
     for (auto& component : m_electronicComponents)
     {
@@ -144,7 +144,8 @@ void SimulationScene::highlightConductingPaths()
             {
                 for (const auto& connection : m_connectionManager.getConnections(battery))
                 {
-                    connection.wire->setOpacity(0.25);
+                    connection.wire->setHighlighted(true);
+                    connection.wire->update();
                 }
             }
         }

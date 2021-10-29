@@ -11,6 +11,7 @@
 
 class ElectronicComponent;
 class Terminal;
+class Wire;
 
 class SimulationScene : public QGraphicsScene
 {
@@ -22,7 +23,7 @@ public:
 private:
     std::vector<std::unique_ptr<ElectronicComponent>> m_electronicComponents;
 
-    QGraphicsLineItem* m_curWire = nullptr;
+    Wire* m_curWire = nullptr;
 
     void addComponent(std::unique_ptr<ElectronicComponent> electronicComponent);
 

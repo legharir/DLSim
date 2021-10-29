@@ -1,7 +1,7 @@
 #include "ConnectionManager.h"
 
 void ConnectionManager::createConnection(
-    const ElectronicComponent* sourceComponent, const ElectronicComponent* destComponent, QGraphicsLineItem* wire)
+    const ElectronicComponent* sourceComponent, const ElectronicComponent* destComponent, Wire* wire)
 {
     m_connections[sourceComponent].push_back({ wire, true });
     m_connections[destComponent].push_back({ wire, false });
