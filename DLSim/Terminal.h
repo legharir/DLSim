@@ -39,6 +39,8 @@ public:
 
     void setHighlighted(bool highlight);
 
+    bool containsScenePoint(const QPointF& scenePoint) const;
+
     void mousePressEvent(QGraphicsSceneMouseEvent* event) override;
     void mouseMoveEvent(QGraphicsSceneMouseEvent* event) override;
     void mouseReleaseEvent(QGraphicsSceneMouseEvent* event) override;

@@ -23,11 +23,7 @@ Terminal* ElectronicComponent::getIntersectingTerminal(const QPointF& scenePoint
     const auto it = std::find_if(
         m_terminals.begin(),
         m_terminals.end(),
-        [&, this](const std::unique_ptr<Terminal>& terminal)
-        {
-            const auto point = terminal->mapFromScene(scenePoint);
-            return terminal->contains(point);
-        });
+        [&, this](const std::unique_ptr<Terminal>& terminal) { return terminal->containsScenePoint(scenePoint); });
 
     return it != m_terminals.end() ? (*it).get() : nullptr;
 }
@@ -55,4 +51,9 @@ QVariant ElectronicComponent::itemChange(GraphicsItemChange change, const QVaria
 const std::vector<std::unique_ptr<Terminal>>& ElectronicComponent::getTerminals() const
 {
     return m_terminals;
+}
+
+bool ElectronicComponent::containsScenePoint(const QPointF& scenePoint) const
+{
+    return contains(mapFromScene(scenePoint));
 }

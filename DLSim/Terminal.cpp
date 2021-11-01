@@ -25,6 +25,11 @@ void Terminal::setHighlighted(bool highlight)
     m_highlighted = highlight;
 }
 
+bool Terminal::containsScenePoint(const QPointF& scenePoint) const
+{
+    return contains(mapFromScene(scenePoint));
+}
+
 void Terminal::paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget)
 {
     if (m_highlighted || option->state & QStyle::State_MouseOver)

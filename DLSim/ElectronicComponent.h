@@ -21,6 +21,8 @@ public:
 
     const std::vector<std::unique_ptr<Terminal>>& getTerminals() const;
 
+    bool containsScenePoint(const QPointF& scenePoint) const;
+
     // QGraphicsItem overrides.
     QVariant itemChange(GraphicsItemChange change, const QVariant& value);
 

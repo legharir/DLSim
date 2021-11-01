@@ -85,28 +85,18 @@ void SimulationScene::onEndWire(Terminal* sourceTerminal, const QPointF& point)
 {
     setTerminalsHighlighted(false);
 
-    //auto destTerminal = std::find_if(
-    //    m_electronicComponents.begin(),
-    //    m_electronicComponents.end(),
-    //    [&](auto& component) { return component->getIntersectingTerminal(point); });
+    auto itr = std::find_if(
+        m_electronicComponents.begin(),
+        m_electronicComponents.end(),
+        [&](auto& component) { return component->containsScenePoint(point); });
 
-
-    auto wireConnected = false;
-
-    for (auto& component : m_electronicComponents)
+    if (itr != m_electronicComponents.end())
     {
-        // If the wire was placed on a terminal, create a connection to it.
-        if (auto destTerminal = component->getIntersectingTerminal(point))
-        {
-            createConnections(sourceTerminal, destTerminal);
-            snapWireToTerminal(*destTerminal);
-            wireConnected = true;
-            break;
-        }
+        auto destTerminal = (*itr)->getIntersectingTerminal(point);
+        createConnections(sourceTerminal, destTerminal);
+        snapWireToTerminal(*destTerminal);
     }
-
-    // Remove the wire if it didn't connect the component to another.
-    if (!wireConnected)
+    else
     {
         removeItem(m_curWire);
     }
@@ -114,6 +104,7 @@ void SimulationScene::onEndWire(Terminal* sourceTerminal, const QPointF& point)
     m_curWire = nullptr;
 
     m_currentManager.printGraph();
+
     highlightConductingPaths();
 }
 
