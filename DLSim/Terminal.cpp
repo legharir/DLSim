@@ -42,6 +42,11 @@ void Terminal::mouseReleaseEvent(QGraphicsSceneMouseEvent* event)
     emit mouseReleased(this, event->scenePos());
 }
 
+QPointF Terminal::center() const
+{
+    return mapToScene(boundingRect().center());
+}
+
 Terminal::Type Terminal::getType() const
 {
     return m_type;

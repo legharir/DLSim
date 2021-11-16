@@ -49,8 +49,7 @@ void SimulationScene::onComponentsChanged()
 void SimulationScene::snapWireToTerminal(const Terminal& terminal)
 {
     auto snappedLine = m_curWire->line();
-    const auto terminalCenter = terminal.scenePos();
-    snappedLine.setP2(terminalCenter);
+    snappedLine.setP2(terminal.center());
     m_curWire->setLine(snappedLine);
 }
 

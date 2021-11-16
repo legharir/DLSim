@@ -39,6 +39,8 @@ public:
     void mouseMoveEvent(QGraphicsSceneMouseEvent* event) override;
     void mouseReleaseEvent(QGraphicsSceneMouseEvent* event) override;
 
+    QPointF center() const;
+
 signals:
     void mousePressed(const Terminal* terminal, const QPointF& point);
     void mouseMoved(const QPointF& point);

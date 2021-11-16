@@ -6,8 +6,6 @@
 CircleTerminal::CircleTerminal(Terminal::Type type, ElectronicComponent* parent, Polarity polarity)
     : Terminal(type, parent, polarity)
 {
-    setRect(0, 0, 5, 5);
-    QGraphicsItem::setPos(10, 10);
 }
 
 void CircleTerminal::paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget)

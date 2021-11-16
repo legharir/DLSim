@@ -1,5 +1,6 @@
 ﻿#include "Battery.h"
 
+#include <QGraphicsItem>
 #include <QGraphicsLineItem>
 #include <QPainter>
 #include <QPointF>
