@@ -1,19 +1,20 @@
 ﻿#include "Battery.h"
 
+#include <QGraphicsLineItem>
 #include <QPainter>
 #include <QPointF>
 
-#include "Terminal.h"
+#include "LineTerminal.h"
 
 Battery::Battery()
 {
-    auto positiveTerminal =
-        std::make_unique<Terminal>(Terminal::Type::Input, Terminal::Polarity::Positive, this, "positive terminal");
+    auto positiveTerminal = std::make_unique<LineTerminal>(Terminal::Type::Input, this, Terminal::Polarity::Positive);
+    positiveTerminal->setObjectName("pos terminal");
     positiveTerminal->setLine(QLineF(10, 0, 20, 0));
     addTerminal(std::move(positiveTerminal));
 
-    auto negativeTerminal =
-        std::make_unique<Terminal>(Terminal::Type::Output, Terminal::Polarity::Negative, this, "negative terminal");
+    auto negativeTerminal = std::make_unique<LineTerminal>(Terminal::Type::Output, this, Terminal::Polarity::Negative);
+    negativeTerminal->setObjectName("neg terminal");
     negativeTerminal->setLine(QLineF(0, 50, 30, 50));
     addTerminal(std::move(negativeTerminal));
 }

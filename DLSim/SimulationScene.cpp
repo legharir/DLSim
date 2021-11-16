@@ -2,8 +2,6 @@
 
 #include <QGraphicsSceneMouseEvent>
 
-#include <QDebug>
-
 #include "Battery.h"
 #include "Led.h"
 #include "Terminal.h"
@@ -51,7 +49,7 @@ void SimulationScene::onComponentsChanged()
 void SimulationScene::snapWireToTerminal(const Terminal& terminal)
 {
     auto snappedLine = m_curWire->line();
-    const auto terminalCenter = terminal.mapToScene(terminal.line().center());
+    const auto terminalCenter = terminal.scenePos();
     snappedLine.setP2(terminalCenter);
     m_curWire->setLine(snappedLine);
 }
@@ -85,18 +83,18 @@ void SimulationScene::onEndWire(Terminal* sourceTerminal, const QPointF& point)
 {
     setTerminalsHighlighted(false);
 
-    auto itr = std::find_if(
-        m_electronicComponents.begin(),
-        m_electronicComponents.end(),
-        [&](auto& component) { return component->containsScenePoint(point); });
-
-    if (itr != m_electronicComponents.end())
+    bool connected = false;
+    for (const auto& component : m_electronicComponents)
     {
-        auto destTerminal = (*itr)->getIntersectingTerminal(point);
-        createConnections(sourceTerminal, destTerminal);
-        snapWireToTerminal(*destTerminal);
+        if (auto destTerminal = component->getIntersectingTerminal(point))
+        {
+            createConnections(sourceTerminal, destTerminal);
+            snapWireToTerminal(*destTerminal);
+            connected = true;
+        }
     }
-    else
+
+    if (!connected)
     {
         removeItem(m_curWire);
     }

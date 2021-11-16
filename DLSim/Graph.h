@@ -55,11 +55,11 @@ public:
 
             for (const auto& neighbour : neighbours)
             {
-                neighboursStr.push_back(QString::fromStdString(neighbour->getName()));
+                neighboursStr.push_back(neighbour->objectName());
                 neighboursStr.push_back(QString::fromStdString(", "));
             }
 
-            qDebug() << QString::fromStdString(vertex->getName()) << ":"
+            qDebug() << vertex->objectName() << ":"
                      << "[" << neighboursStr << "]";
         }
     }

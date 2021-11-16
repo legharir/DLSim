@@ -1,11 +1,11 @@
 ﻿#pragma once
 
-#include <QGraphicsLineItem>
+#include <QGraphicsItem>
 #include <QObject>
 
 class ElectronicComponent;
 
-class Terminal : public QObject, public QGraphicsLineItem
+class Terminal : public QObject, public QGraphicsItem
 {
     Q_OBJECT
 
@@ -23,16 +23,10 @@ public:
         Positive,
     };
 
-    Terminal(
-        Type type,
-        Polarity polarity = Polarity::None,
-        ElectronicComponent* parent = nullptr,
-        const std::string& name = "unnamed");
+    Terminal(Type type, ElectronicComponent* parent = nullptr, Polarity polarity = Polarity::None);
 
     Type getType() const;
     Polarity getPolarity() const;
-
-    std::string getName() const;
 
     ElectronicComponent* getComponent();
     const ElectronicComponent* getComponent() const;
@@ -45,18 +39,13 @@ public:
     void mouseMoveEvent(QGraphicsSceneMouseEvent* event) override;
     void mouseReleaseEvent(QGraphicsSceneMouseEvent* event) override;
 
-    // QGraphicsLineItem overrides
-    void paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget) override;
-    QPainterPath shape() const override;
-    QRectF boundingRect() const override;
-
 signals:
     void mousePressed(const Terminal* terminal, const QPointF& point);
     void mouseMoved(const QPointF& point);
     void mouseReleased(Terminal* terminal, const QPointF& point);
     void moved(const Terminal& terminal, const QPointF& point);
 
-private:
+protected:
     Type m_type;
     Polarity m_polarity;
 

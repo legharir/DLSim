@@ -2,12 +2,12 @@
 
 #include <QPainter>
 
-#include "Terminal.h"
+#include "CircleTerminal.h"
 
 Led::Led()
 {
-    auto terminal = std::make_unique<Terminal>(Terminal::Type::Input, Terminal::Polarity::None, this, "led");
-    terminal->setLine(QLineF(0, 0, 20, 0));
+    auto terminal = std::make_unique<CircleTerminal>(Terminal::Type::Input, this);
+    terminal->setObjectName("led");
     addTerminal(std::move(terminal));
 }
 

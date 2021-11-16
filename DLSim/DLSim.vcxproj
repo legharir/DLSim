@@ -91,6 +91,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Battery.cpp" />
+    <ClCompile Include="CircleTerminal.cpp" />
     <ClCompile Include="ConnectionManager.cpp" />
     <ClCompile Include="GraphTools.cpp" />
     <ClCompile Include="BreadthFirstSearch.cpp" />
@@ -98,6 +99,7 @@
     <ClCompile Include="ElectronicComponent.cpp" />
     <ClCompile Include="Graph.cpp" />
     <ClCompile Include="Led.cpp" />
+    <ClCompile Include="LineTerminal.cpp" />
     <ClCompile Include="MathTools.cpp" />
     <ClCompile Include="SimulationScene.cpp" />
     <ClCompile Include="Terminal.cpp" />
@@ -119,12 +121,14 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Battery.h" />
+    <ClInclude Include="CircleTerminal.h" />
     <ClInclude Include="ConnectionManager.h" />
     <ClInclude Include="GraphTools.h" />
     <ClInclude Include="BreadthFirstSearch.h" />
     <ClInclude Include="CurrentManager.h" />
     <ClInclude Include="Graph.h" />
     <ClInclude Include="Led.h" />
+    <ClInclude Include="LineTerminal.h" />
     <ClInclude Include="MathTools.h" />
     <ClInclude Include="Wire.h" />
   </ItemGroup>

@@ -1,7 +1,5 @@
 ﻿#include "ElectronicComponent.h"
 
-#include <QDebug>
-
 #include "Terminal.h"
 
 ElectronicComponent::ElectronicComponent()
