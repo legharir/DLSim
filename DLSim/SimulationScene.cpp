@@ -4,6 +4,7 @@
 
 #include "Battery.h"
 #include "Led.h"
+#include "Switch.h"
 #include "Terminal.h"
 #include "Wire.h"
 
@@ -11,6 +12,7 @@ SimulationScene::SimulationScene()
 {
     addComponent(std::make_unique<Battery>());
     addComponent(std::make_unique<Led>());
+    addComponent(std::make_unique<Switch>());
 }
 
 void SimulationScene::addComponent(std::unique_ptr<ElectronicComponent> electronicComponent)

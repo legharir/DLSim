@@ -102,6 +102,7 @@
     <ClCompile Include="LineTerminal.cpp" />
     <ClCompile Include="MathTools.cpp" />
     <ClCompile Include="SimulationScene.cpp" />
+    <ClCompile Include="Switch.cpp" />
     <ClCompile Include="Terminal.cpp" />
     <ClCompile Include="Wire.cpp" />
     <QtRcc Include="DLSim.qrc" />
@@ -130,6 +131,7 @@
     <ClInclude Include="Led.h" />
     <ClInclude Include="LineTerminal.h" />
     <ClInclude Include="MathTools.h" />
+    <ClInclude Include="Switch.h" />
     <ClInclude Include="Wire.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
