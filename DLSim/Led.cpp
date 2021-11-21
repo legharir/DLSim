@@ -6,7 +6,7 @@
 
 Led::Led()
 {
-    auto terminal = std::make_unique<CircleTerminal>(Terminal::Type::Input, this);
+    auto* terminal = new CircleTerminal(Terminal::Type::Input, this);
     terminal->setObjectName("led");
     terminal->setRect(-6, 8, 5, 5);
     addTerminal(std::move(terminal));

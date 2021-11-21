@@ -21,18 +21,23 @@ Terminal* ElectronicComponent::getIntersectingTerminal(const QPointF& scenePoint
     const auto it = std::find_if(
         m_terminals.begin(),
         m_terminals.end(),
-        [&, this](const std::unique_ptr<Terminal>& terminal) { return terminal->containsScenePoint(scenePoint); });
+        [&, this](const auto* terminal) { return terminal->containsScenePoint(scenePoint); });
 
-    return it != m_terminals.end() ? (*it).get() : nullptr;
+    return it != m_terminals.end() ? *it : nullptr;
 }
 
-void ElectronicComponent::addTerminal(std::unique_ptr<Terminal> terminal)
+std::unordered_set<const Terminal*> ElectronicComponent::getTerminals() const
 {
-    QObject::connect(terminal.get(), &Terminal::mousePressed, this, &ElectronicComponent::beginWire);
-    QObject::connect(terminal.get(), &Terminal::mouseMoved, this, &ElectronicComponent::updateWire);
-    QObject::connect(terminal.get(), &Terminal::mouseReleased, this, &ElectronicComponent::endWire);
+    return std::unordered_set<const Terminal*>{ m_terminals.begin(), m_terminals.end() };
+}
 
-    m_terminals.push_back(std::move(terminal));
+void ElectronicComponent::addTerminal(Terminal* terminal)
+{
+    QObject::connect(terminal, &Terminal::mousePressed, this, &ElectronicComponent::beginWire);
+    QObject::connect(terminal, &Terminal::mouseMoved, this, &ElectronicComponent::updateWire);
+    QObject::connect(terminal, &Terminal::mouseReleased, this, &ElectronicComponent::endWire);
+
+    m_terminals.insert(terminal);
 }
 
 QVariant ElectronicComponent::itemChange(GraphicsItemChange change, const QVariant& value)
@@ -44,11 +49,6 @@ QVariant ElectronicComponent::itemChange(GraphicsItemChange change, const QVaria
     }
 
     return QGraphicsItem::itemChange(change, value);
-}
-
-const std::vector<std::unique_ptr<Terminal>>& ElectronicComponent::getTerminals() const
-{
-    return m_terminals;
 }
 
 bool ElectronicComponent::containsScenePoint(const QPointF& scenePoint) const

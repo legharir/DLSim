@@ -1,13 +1,10 @@
 ﻿#pragma once
 
-#include <memory>
-#include <unordered_map>
-#include <vector>
+#include <unordered_set>
 
 #include <QGraphicsScene>
 
 #include "ConnectionManager.h"
-#include "CurrentManager.h"
 
 class ElectronicComponent;
 class Terminal;
@@ -21,28 +18,25 @@ public:
     SimulationScene();
 
 private:
-    std::vector<std::unique_ptr<ElectronicComponent>> m_electronicComponents;
+    void addComponent(ElectronicComponent* component);
 
-    Wire* m_curWire = nullptr;
+    // TODO: can probably use a template func to do this kind of thing.
+    ElectronicComponent* getComponent(const ElectronicComponent* component);
+    Wire* getWire(const Wire* wire);
 
-    void addComponent(std::unique_ptr<ElectronicComponent> electronicComponent);
-
-    void onComponentsChanged();
-
+    void createConnections(Terminal* sourceTerminal, Terminal* destTerminal);
+    void highlightConductingPaths();
     void snapWireToTerminal(const Terminal& terminal);
+    void setTerminalsHighlighted(bool highlighted);
 
     void onBeginWire(const Terminal* terminal, const QPointF& point);
     void onUpdateWire(const QPointF& point);
     void onEndWire(Terminal* terminal, const QPointF& point);
-
     void onElectronicComponentMoved(const ElectronicComponent* component, const QPointF& delta);
 
-    void highlightConductingPaths();
+    std::unordered_set<ElectronicComponent*> m_electronicComponents;
+    std::unordered_set<Wire*> m_wires;
+    Wire* m_curWire = nullptr;
 
-    void setTerminalsHighlighted(bool highlighted);
-
-    void createConnections(Terminal* sourceTerminal, Terminal* destTerminal);
-
-    CurrentManager m_currentManager;
     ConnectionManager m_connectionManager;
 };

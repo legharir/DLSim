@@ -1,8 +1,6 @@
 ﻿#pragma once
 
-#include <memory>
-#include <optional>
-#include <vector>
+#include <unordered_set>
 
 #include <QGraphicsObject>
 
@@ -19,7 +17,7 @@ public:
 
     Terminal* getIntersectingTerminal(const QPointF& scenePoint) const;
 
-    const std::vector<std::unique_ptr<Terminal>>& getTerminals() const;
+    std::unordered_set<const Terminal*> getTerminals() const;
 
     bool containsScenePoint(const QPointF& scenePoint) const;
 
@@ -34,7 +32,7 @@ signals:
     void moved(const ElectronicComponent* component, const QPointF& delta);
 
 protected:
-    void addTerminal(std::unique_ptr<Terminal> terminal);
+    void addTerminal(Terminal* terminal);
 
-    std::vector<std::unique_ptr<Terminal>> m_terminals;
+    std::unordered_set<Terminal*> m_terminals;
 };

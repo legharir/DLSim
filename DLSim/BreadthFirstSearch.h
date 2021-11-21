@@ -3,27 +3,25 @@
 #include <queue>
 #include <unordered_map>
 
-#include "Graph.h"
-
-template <typename T>
+template <typename Graph, typename Vertex>
 class BreadthFirstSearch
 {
 public:
-    BreadthFirstSearch(const Graph<T>& graph, T sourceVertex);
+    BreadthFirstSearch(const Graph& graph, const Vertex& sourceVertex);
 
-    bool hasPathTo(T vertex);
+    bool hasPathTo(const Vertex& vertex);
 
 private:
-    std::unordered_map<T, T> m_pathTo;
+    std::unordered_map<Vertex, Vertex> m_pathTo;
 };
 
-template <typename T>
-inline BreadthFirstSearch<T>::BreadthFirstSearch(const Graph<T>& graph, T sourceVertex)
+template <typename Graph, typename Vertex>
+inline BreadthFirstSearch<Graph, Vertex>::BreadthFirstSearch(const Graph& graph, const Vertex& sourceVertex)
 {
-    std::queue<T> queue;
+    std::queue<Vertex> queue;
     queue.push(sourceVertex);
 
-    std::unordered_set<T> seen = { sourceVertex };
+    std::unordered_set<Vertex> seen = { sourceVertex };
 
     while (!queue.empty())
     {
@@ -42,8 +40,8 @@ inline BreadthFirstSearch<T>::BreadthFirstSearch(const Graph<T>& graph, T source
     }
 }
 
-template <typename T>
-inline bool BreadthFirstSearch<T>::hasPathTo(T vertex)
+template <typename Graph, typename Vertex>
+inline bool BreadthFirstSearch<Graph, Vertex>::hasPathTo(const Vertex& vertex)
 {
     return m_pathTo.contains(vertex);
 }

@@ -6,15 +6,15 @@
 
 Switch::Switch()
 {
-    auto terminal = std::make_unique<CircleTerminal>(Terminal::Type::Input, this);
+    auto terminal = new CircleTerminal(Terminal::Type::Input, this);
     terminal->setObjectName("switch_1");
     terminal->setRect(-5, -5, 5, 5);
-    addTerminal(std::move(terminal));
+    addTerminal(terminal);
 
-    terminal = std::make_unique<CircleTerminal>(Terminal::Type::Input, this);
+    terminal = new CircleTerminal(Terminal::Type::Input, this);
     terminal->setObjectName("switch_2");
     terminal->setRect(20, -5, 5, 5);
-    addTerminal(std::move(terminal));
+    addTerminal(terminal);
 }
 
 void Switch::paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget)

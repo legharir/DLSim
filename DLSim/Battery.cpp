@@ -9,15 +9,15 @@
 
 Battery::Battery()
 {
-    auto positiveTerminal = std::make_unique<LineTerminal>(Terminal::Type::Input, this, Terminal::Polarity::Positive);
+    auto* positiveTerminal = new LineTerminal(Terminal::Type::Input, this, Terminal::Polarity::Positive);
     positiveTerminal->setObjectName("pos terminal");
     positiveTerminal->setLine(QLineF(10, 0, 20, 0));
-    addTerminal(std::move(positiveTerminal));
+    addTerminal(positiveTerminal);
 
-    auto negativeTerminal = std::make_unique<LineTerminal>(Terminal::Type::Output, this, Terminal::Polarity::Negative);
+    auto* negativeTerminal = new LineTerminal(Terminal::Type::Output, this, Terminal::Polarity::Negative);
     negativeTerminal->setObjectName("neg terminal");
     negativeTerminal->setLine(QLineF(0, 50, 30, 50));
-    addTerminal(std::move(negativeTerminal));
+    addTerminal(negativeTerminal);
 }
 
 const Terminal* Battery::getPositiveTerminal() const
@@ -26,11 +26,11 @@ const Terminal* Battery::getPositiveTerminal() const
     {
         if (terminal->getPolarity() == Terminal::Polarity::Positive)
         {
-            return terminal.get();
+            return terminal;
         }
     }
 
-    return nullptr;
+    throw std::runtime_error("No negative terminal exists");
 }
 
 const Terminal* Battery::getNegativeTerminal() const
@@ -39,11 +39,11 @@ const Terminal* Battery::getNegativeTerminal() const
     {
         if (terminal->getPolarity() == Terminal::Polarity::Negative)
         {
-            return terminal.get();
+            return terminal;
         }
     }
 
-    return nullptr;
+    throw std::runtime_error("No negative terminal exists");
 }
 
 

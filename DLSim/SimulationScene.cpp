@@ -1,6 +1,10 @@
 ﻿#include "SimulationScene.h"
 
+#include <queue>
+
 #include <QGraphicsSceneMouseEvent>
+
+#include "STLTools.h"
 
 #include "Battery.h"
 #include "Led.h"
@@ -10,42 +14,35 @@
 
 SimulationScene::SimulationScene()
 {
-    addComponent(std::make_unique<Battery>());
-    addComponent(std::make_unique<Led>());
-    addComponent(std::make_unique<Switch>());
+    addComponent(new Battery());
+    addComponent(new Led());
+    addComponent(new Switch());
 }
 
-void SimulationScene::addComponent(std::unique_ptr<ElectronicComponent> electronicComponent)
+void SimulationScene::addComponent(ElectronicComponent* component)
 {
-    m_electronicComponents.push_back(std::move(electronicComponent));
-    ElectronicComponent* component = m_electronicComponents.back().get();
-
     connect(component, &ElectronicComponent::beginWire, this, &SimulationScene::onBeginWire);
     connect(component, &ElectronicComponent::updateWire, this, &SimulationScene::onUpdateWire);
     connect(component, &ElectronicComponent::endWire, this, &SimulationScene::onEndWire);
-
     connect(component, &ElectronicComponent::moved, this, &SimulationScene::onElectronicComponentMoved);
 
     QGraphicsScene::addItem(component);
 
-    m_currentManager.addComponent(component);
-
-    onComponentsChanged();
+    m_electronicComponents.insert(std::move(component));
 }
 
-void SimulationScene::onComponentsChanged()
+ElectronicComponent* SimulationScene::getComponent(const ElectronicComponent* component)
 {
-    for (const auto& component : m_electronicComponents)
-    {
-        if (const auto battery = dynamic_cast<Battery*>(component.get()))
-        {
-            const auto* negativeTerminal = battery->getNegativeTerminal();
-            const auto* positiveTerminal = battery->getPositiveTerminal();
-            if (m_currentManager.hasPath(negativeTerminal, positiveTerminal))
-            {
-            }
-        }
-    }
+    auto itr = m_electronicComponents.find(const_cast<ElectronicComponent*>(component));
+    assert(itr != m_electronicComponents.end());
+    return itr != m_electronicComponents.end() ? *itr : nullptr;
+}
+
+Wire* SimulationScene::getWire(const Wire* wire)
+{
+    auto itr = m_wires.find(const_cast<Wire*>(wire));
+    assert(itr != m_wires.end());
+    return itr != m_wires.end() ? *itr : nullptr;
 }
 
 void SimulationScene::snapWireToTerminal(const Terminal& terminal)
@@ -61,7 +58,7 @@ void SimulationScene::onBeginWire(const Terminal* terminal, const QPointF& point
 
     for (auto& component : m_electronicComponents)
     {
-        if (component.get() == terminal->getComponent())
+        if (component == terminal->getComponent())
         {
             continue;
         }
@@ -98,13 +95,16 @@ void SimulationScene::onEndWire(Terminal* sourceTerminal, const QPointF& point)
     if (!connected)
     {
         removeItem(m_curWire);
+        delete m_curWire;
+        m_curWire = nullptr;
+    }
+    else
+    {
+        m_wires.insert(m_curWire);
     }
 
-    m_curWire = nullptr;
-
-    m_currentManager.printGraph();
-
-    highlightConductingPaths();
+    m_connectionManager.printConnections();
+    //highlightConductingPaths();
 }
 
 void SimulationScene::onElectronicComponentMoved(const ElectronicComponent* component, const QPointF& delta)
@@ -120,7 +120,9 @@ void SimulationScene::onElectronicComponentMoved(const ElectronicComponent* comp
         {
             line.setP2(line.p2() + delta);
         }
-        connection.wire->setLine(line);
+
+        auto* wire = getWire(connection.wire);
+        wire->setLine(line);
     }
 }
 
@@ -128,14 +130,28 @@ void SimulationScene::highlightConductingPaths()
 {
     for (const auto& component : m_electronicComponents)
     {
-        if (const auto battery = dynamic_cast<Battery*>(component.get()))
+        if (const auto battery = dynamic_cast<Battery*>(component))
         {
-            if (m_currentManager.hasPath(battery->getNegativeTerminal(), battery->getPositiveTerminal()))
+            if (m_connectionManager.hasPath(battery->getNegativeTerminal(), battery->getPositiveTerminal()))
             {
-                for (const auto& connection : m_connectionManager.getConnections(battery))
+                std::queue<const Terminal*> terminals;
+                terminals.push(battery->getNegativeTerminal());
+
+                while (!terminals.empty())
                 {
-                    connection.wire->setHighlighted(true);
-                    connection.wire->update();
+                    auto& terminal = terminals.front();
+
+                    auto* component = getComponent(terminal->getComponent());
+                    component->setTerminalsHighlighted(true);
+
+                    for (const auto& connection : m_connectionManager.getConnections(terminal))
+                    {
+                        auto* wire = getWire(connection.wire);
+                        wire->setHighlighted(true);
+                        terminals.push(connection.terminal);
+                    }
+
+                    terminals.pop();
                 }
             }
         }
@@ -155,7 +171,5 @@ void SimulationScene::createConnections(Terminal* sourceTerminal, Terminal* dest
 {
     auto* sourceComponent = sourceTerminal->getComponent();
     auto* destComponent = destTerminal->getComponent();
-
-    m_connectionManager.createConnection(sourceComponent, destComponent, m_curWire);
-    m_currentManager.connectTerminals(sourceTerminal, destTerminal);
+    m_connectionManager.connectTerminals(sourceTerminal, destTerminal, m_curWire);
 }

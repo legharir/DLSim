@@ -1,10 +1,11 @@
 #pragma once
 
-#include <unordered_map>
+#include <map>
+#include <unordered_set>
 #include <vector>
 
-class QGraphicsLineItem;
 class ElectronicComponent;
+class Terminal;
 class Wire;
 
 class ConnectionManager
@@ -12,16 +13,27 @@ class ConnectionManager
 public:
     struct Connection
     {
-        Wire* wire;
+        const Terminal* terminal;
+        const Wire* wire;
         bool isSource;
     };
 
-    using ConnectionMap = std::unordered_map<const ElectronicComponent*, std::vector<Connection>>;
+    void removeComponent(const ElectronicComponent* component);
 
-    void
-    createConnection(const ElectronicComponent* sourceComponent, const ElectronicComponent* destComponent, Wire* wire);
-    const std::vector<Connection>& getConnections(const ElectronicComponent* component);
+    void connectTerminals(const Terminal* source, const Terminal* dest, const Wire* wire);
+
+    // Returns all the connections from/to the given terminal.
+    std::vector<Connection> getConnections(const Terminal* terminal) const;
+    // Returns all the connections from/to every terminal of the given component.
+    std::vector<Connection> getConnections(const ElectronicComponent* component) const;
+
+    // Returns the terminals that are connected to the given terminal.
+    std::vector<const Terminal*> getNeighbours(const Terminal* terminal) const;
+
+    bool hasPath(const Terminal* source, const Terminal* dest) const;
+
+    void printConnections() const;
 
 private:
-    ConnectionMap m_connections;
+    std::multimap<const Terminal*, Connection> m_connections;
 };
